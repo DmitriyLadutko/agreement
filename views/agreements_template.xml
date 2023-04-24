@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- agreement type tree-->
+    <record id="agreement_type_tree_view" model="ir.ui.view">
+        <field name="name">agreement.type.tree</field>
+        <field name="model">agreement.type</field>
+        <field name="arch" type="xml">
+            <tree string="Agreement type">
+                <field name="name"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- agreement type form-->
+    <record id="agreement_type_tree_form" model="ir.ui.view">
+        <field name="name">agreement.type.form</field>
+        <field name="model">agreement.type</field>
+        <field name="arch" type="xml">
+            <form string="Agreement type">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- agreement tree-->
+    <record id="agreement_agreement_tree_view" model="ir.ui.view">
+        <field name="name">agreement.agreement.tree</field>
+        <field name="model">agreement.agreement</field>
+        <field name="arch" type="xml">
+            <tree string="Agreement">
+                <field name="number" optional="show"/>
+                <field name="partner_id" optional="show"/>
+                <field name="kind_id" optional="show"/>
+                <field name="state" optional="show"/>
+                <field name="start_date" optional="show"/>
+                <field name="end_date" optional="show"/>
+                <field name="author_id" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- agreement form-->
+    <record id="agreement_agreement_form_view" model="ir.ui.view">
+        <field name="name">agreement.agreement.form</field>
+        <field name="model">agreement.agreement</field>
+        <field name="arch" type="xml">
+            <form string="Agreement">
+                <header>
+                    <button name="action_send_for_approval"
+                            type="object"
+                            string="Send For Approval"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('field_for_attrs', '!=', '1')]}"/>
+                    <button name="action_agree"
+                            type="object"
+                            string="Agree"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('field_for_attrs', '!=', '2')]}"/>
+                    <button name="action_send_for_revision"
+                            type="object"
+                            string="Send For Revision"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('field_for_attrs', '!=', '2')]}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="number"/>
+                        <field name="field_for_attrs" invisible="1"/>
+                        <field name="partner_id"
+                               attrs="{'readonly': [('state', '!=', 'draft'),('state', '!=', False)]}"/>
+                        <field name="kind_id" attrs="{'readonly': [('state', '!=', 'draft'),('state', '!=', False)]}"/>
+                        <field name="state" widget="selection"/>
+                        <field name="start_date"
+                               attrs="{'readonly': [('state', '!=', 'draft'),('state', '!=', False)]}"/>
+                        <field name="end_date" attrs="{'readonly': [('state', '!=', 'draft'),('state', '!=', False)]}"/>
+                        <field name="author_id"
+                               attrs="{'readonly': [('state', '!=', 'draft'),('state', '!=', False)]}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- agreement type action-->
+    <record id="agreements_type_action" model="ir.actions.act_window">
+        <field name="name">agreement.type</field>
+        <field name="res_model">agreement.type</field>
+        <field name="view_mode">tree,form,graph</field>
+        <field name="view_id" ref="agreement_type_tree_view"/>
+        <field name="context">{"search_default_agreements_type_names":1}</field>
+    </record>
+
+    <!-- agreement action-->
+    <record id="agreements_action" model="ir.actions.act_window">
+        <field name="name">Agreements</field>
+        <field name="res_model">agreement.agreement</field>
+        <field name="view_mode">tree,form,graph</field>
+        <field name="view_id" ref="agreement_agreement_tree_view"/>
+    </record>
+
+    <!-- agreement type search-->
+    <record id="agreements_type_names_search" model="ir.ui.view">
+        <field name="name">agreement.type.search</field>
+        <field name="model">agreement.type</field>
+        <field name="priority" eval="15"/>
+        <field name="arch" type="xml">
+            <search string="Agreements Type Names">
+                <filter string="Agreements Type Names" domain="[('name', '!=', ' ')]" name="agreements_type_names"/>
+            </search>
+        </field>
+    </record>
+
+    <menuitem id="menu_agreements"
+              name="Agreements"
+              sequence="1"
+              groups="base.group_user"
+              action="agreements_action"
+    />
+    <menuitem id="menu_agreements_inherit"
+              name="Agreements"
+              sequence="2"
+              parent="menu_agreements"
+              groups="base.group_user"
+    />
+    <menuitem id="menu_agreements_settings"
+              name="Settings"
+              sequence="3"
+              parent="menu_agreements"
+              groups="agreement.group_agreement_manager"
+              action="agreements_type_action"
+    />
+
+</odoo>
